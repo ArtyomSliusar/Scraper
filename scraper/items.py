@@ -12,6 +12,16 @@ class ScraperRozetka(scrapy.Item):
     # define the fields for your item here like:
     url = scrapy.Field()
     link = scrapy.Field()
+    id = scrapy.Field()
+    title = scrapy.Field()
+    price = scrapy.Field()
+
+
+class ScraperMoyo(scrapy.Item):
+    # define the fields for your item here like:
+    url = scrapy.Field()
+    link = scrapy.Field()
+    id = scrapy.Field()
     title = scrapy.Field()
     price = scrapy.Field()
 

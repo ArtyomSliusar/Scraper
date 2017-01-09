@@ -10,8 +10,11 @@
 #     def process_item(self, item, spider):
 #         return item
 
-
+import re
+import os
+import json
 from .mail_sender import MailSender
+from scrapy.exceptions import DropItem
 
 
 class MinfinHtmlPipeline(object):
@@ -25,6 +28,44 @@ class MinfinHtmlPipeline(object):
         add_html_footer(buf_list)
         mail = MailSender("minfin_scraper", ["artyomsliusar@gmail.com"], "Minfin", buf_list, 'html')
         mail.send()
+
+
+class JsonWriterPipeline(object):
+
+    def open_spider(self, spider):
+        self.line_sep = ",\n"
+        self.file = open('{}.json'.format(spider.name), 'wb')
+        self.file.write(bytes('[', 'UTF-8'))
+
+    def close_spider(self, spider):
+        self.file.seek(-len(self.line_sep), os.SEEK_END)
+        self.file.truncate()  # truncate last line separator
+        self.file.write(bytes(']', 'UTF-8'))
+        self.file.close()
+
+    def process_item(self, item, spider):
+        line = json.dumps(dict(item)) + self.line_sep
+        self.file.write(bytes(line, 'UTF-8'))
+        return item
+
+
+class MoyoCleansingPipeline(object):
+
+    def process_item(self, item, spider):
+        if item['title']:
+            title = re.sub(r'[^\x00-\x7F]+ |\n', ' ', item['title'])
+            item['title'] = re.sub(r' +', ' ', title).strip()
+        else:
+            raise DropItem("Missing title in {}".format(item))
+        if item['price']:
+            item['price'] = item['price'].replace('\u00a0', '')
+        else:
+            raise DropItem("Missing price in {}".format(item))
+        if item['link']:
+            item['link'] = 'http://www.moyo.ua' + item['link']
+        else:
+            raise DropItem("Missing link in {}".format(item))
+        return item
 
 
 def add_html_header(buf_list):
