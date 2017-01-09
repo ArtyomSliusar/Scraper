@@ -8,25 +8,16 @@
 import scrapy
 
 
-class ScraperRozetka(scrapy.Item):
+class RaceItem(scrapy.Item):
     # define the fields for your item here like:
-    url = scrapy.Field()
-    link = scrapy.Field()
-    id = scrapy.Field()
-    title = scrapy.Field()
-    price = scrapy.Field()
+    track_name = scrapy.Field()
+    race_time = scrapy.Field()
+    race_id = scrapy.Field()
+    participants = scrapy.Field()
 
 
-class ScraperMoyo(scrapy.Item):
+class ParticipantItem(scrapy.Item):
     # define the fields for your item here like:
-    url = scrapy.Field()
-    link = scrapy.Field()
-    id = scrapy.Field()
-    title = scrapy.Field()
-    price = scrapy.Field()
-
-
-class ScraperMinfin(scrapy.Item):
-    # define the fields for your item here like:
-    url = scrapy.Field()
-    html = scrapy.Field()
+    participant_name = scrapy.Field()
+    participant_id = scrapy.Field()
+    participant_chances = scrapy.Field()
